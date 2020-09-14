@@ -15,6 +15,10 @@ set t_Co=256 " needed for vim-airline
 set mouse=a
 set updatetime=100 " for updating vim git gutter faster
 
+
+let os = trim(system('uname -m')) 
+
+
 " ------------- key remaps -----------
 
 let mapleader = "\<Space>"
@@ -42,19 +46,22 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'mbbill/undotree'
-Plugin 'preservim/nerdtree'
-Plugin 'xuyuanp/nerdtree-git-plugin' "git indicators in Nerd Tree
-Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plugin 'scrooloose/syntastic'
 Plugin 'nvie/vim-flake8'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'ycm-core/YouCompleteMe'
+if os !~ "armv6l"
+		Plugin 'ycm-core/YouCompleteMe'
+		Plugin 'vim-airline/vim-airline'
+		Plugin 'vim-airline/vim-airline-themes'
+		Plugin 'junegunn/fzf'
+		Plugin 'junegunn/fzf.vim'
+        Plugin 'preservim/nerdtree'
+        Plugin 'xuyuanp/nerdtree-git-plugin' "git indicators in Nerd Tree
+        Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+else
+        Plugin 'ctrlpvim/ctrlp.vim'
+endif
 Plugin 'Yggdroot/indentLine'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
 Plugin 'fcpg/vim-osc52'
-Plugin 'junegunn/fzf'
-Plugin 'junegunn/fzf.vim'
 Plugin 'tpope/vim-commentary'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'ryanoasis/vim-devicons'
@@ -64,9 +71,11 @@ call vundle#end()            " required
 filetype plugin indent on    " required
 
 " ------------- FZF Options ------------------------
-set rtp+=~/.fzf
-nnoremap <silent> <C-f> :Files<CR>
-nnoremap // :BLines<cr>
+if os !~ "armv6l"
+        set rtp+=~/.fzf
+        nnoremap <silent> <C-f> :Files<CR>
+        nnoremap // :BLines<cr>
+endif
 
 " -------------  Copy Text to System Clipboard --------------
 xmap <C-c> y:call SendViaOSC52(getreg('"'))<cr>
@@ -82,11 +91,12 @@ if exists("g:loaded_webdevicons")
 endif
 
 " --------------- Nerd Tree Setting ------------------
-let NERDTreeShowHidden=1
-nmap <silent> <leader>n :NERDTreeToggle<CR> :NERDTreeMirror<CR>
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
+if os !~ "armv6l"
+        let NERDTreeShowHidden=1
+        nmap <silent> <leader>n :NERDTreeToggle<CR> :NERDTreeMirror<CR>
+        autocmd StdinReadPre * let s:std_in=1
+        autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+endif
 " ------------------ vim-git gutter ------------
 autocmd VimEnter * :GitGutterLineHighlightsEnable
