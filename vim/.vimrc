@@ -29,6 +29,8 @@ nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
 nnoremap <leader>u :UndotreeShow<CR>
+nnoremap <leader>rc :%s///gc<Left><Left><Left>
+nmap <leader><leader> V
 
 nnoremap <leader>plugi :PluginInstall<CR> 
 nnoremap <leader>plugc :PluginClean<CR>
@@ -62,7 +64,7 @@ else
 endif
 Plugin 'Yggdroot/indentLine'
 Plugin 'fcpg/vim-osc52'
-Plugin 'tpope/vim-commentary'
+Plugin 'preservim/nerdcommenter'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'ryanoasis/vim-devicons'
 
@@ -70,17 +72,26 @@ Plugin 'ryanoasis/vim-devicons'
 call vundle#end()            " required
 filetype plugin indent on    " required
 
-" ------------- FZF Options ------------------------
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""" FZF Options """"""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
 if os !~ "armv6l"
         set rtp+=~/.fzf
         nnoremap <silent> <C-f> :Files<CR>
         nnoremap // :BLines<cr>
 endif
 
-" -------------  Copy Text to System Clipboard --------------
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""" Copy Text to System Clipboard """""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
 xmap <C-c> y:call SendViaOSC52(getreg('"'))<cr>
 
-" -------------- For vim-devicons --------
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" vim-devicons """""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 set encoding=utf-8
 autocmd FileType nerdtree setlocal nolist
 let g:airline_powerline_fonts = 1
@@ -90,13 +101,37 @@ if exists("g:loaded_webdevicons")
         call webdevicons#refresh()
 endif
 
-" --------------- Nerd Tree Setting ------------------
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" Nerd Tree Setting """"""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
 if os !~ "armv6l"
         let NERDTreeShowHidden=1
         nmap <silent> <leader>n :NERDTreeToggle<CR> :NERDTreeMirror<CR>
         autocmd StdinReadPre * let s:std_in=1
-        autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+        "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+        "autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 endif
-" ------------------ vim-git gutter ------------
-autocmd VimEnter * :GitGutterLineHighlightsEnable
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" NERD COMMENTER """""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"" Align line-wise comment delimiters flush left instead of following code
+" indentation
+let g:NERDDefaultAlign = 'left'
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" VIM-GITGUTTER """""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <leader>ght :GitGutterLineHighlightsToggle<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" UNDOTREE """""""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"if has("persistent_undo")
+"    set undodir=$HOME."/.undodir"
+"    set undofile
+"endif

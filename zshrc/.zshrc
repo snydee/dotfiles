@@ -110,3 +110,5 @@ mkdir -p $WORKON_HOME
 
 
 alias ll="ls -ltrha"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
