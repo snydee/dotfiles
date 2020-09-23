@@ -14,6 +14,8 @@ set path+=**
 set t_Co=256 " needed for vim-airline
 set mouse=a
 set updatetime=100 " for updating vim git gutter faster
+set cursorline "highlight cursor line
+set backspace=2 "to allow backspacing over indent,eol,start
 
 
 let os = trim(system('uname -m')) 
@@ -31,6 +33,10 @@ nnoremap <leader>l :wincmd l<CR>
 nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <leader>rc :%s///gc<Left><Left><Left>
 nmap <leader><leader> V
+" F10 to toggle paste mode
+nmap <F10> :set invpaste<CR>
+set pastetoggle=<F10>
+
 
 nnoremap <leader>plugi :PluginInstall<CR> 
 nnoremap <leader>plugc :PluginClean<CR>
@@ -50,7 +56,17 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'mbbill/undotree'
 Plugin 'scrooloose/syntastic'
 Plugin 'nvie/vim-flake8'
-if os !~ "armv6l"
+Plugin 'Yggdroot/indentLine'
+Plugin 'fcpg/vim-osc52'
+Plugin 'preservim/nerdcommenter'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'ryanoasis/vim-devicons'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'tpope/vim-fugitive'
+if os =~ "armv6l"
+        Plugin 'ctrlpvim/ctrlp.vim'
+        Plugin 'itchyny/lightline.vim'
+else
 		Plugin 'ycm-core/YouCompleteMe'
 		Plugin 'vim-airline/vim-airline'
 		Plugin 'vim-airline/vim-airline-themes'
@@ -59,14 +75,7 @@ if os !~ "armv6l"
         Plugin 'preservim/nerdtree'
         Plugin 'xuyuanp/nerdtree-git-plugin' "git indicators in Nerd Tree
         Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
-else
-        Plugin 'ctrlpvim/ctrlp.vim'
 endif
-Plugin 'Yggdroot/indentLine'
-Plugin 'fcpg/vim-osc52'
-Plugin 'preservim/nerdcommenter'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'ryanoasis/vim-devicons'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -80,6 +89,7 @@ if os !~ "armv6l"
         set rtp+=~/.fzf
         nnoremap <silent> <C-f> :Files<CR>
         nnoremap // :BLines<cr>
+        nnoremap <C-p> :Rg<cr>
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
