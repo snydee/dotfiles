@@ -1,5 +1,15 @@
 "source $HOME/src/dotfiles/vim/coc.vim
-syntax on
+
+
+"plugins
+let need_to_install_plugins = 0
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    let need_to_install_plugins = 1
+endif
+
+
 set nu
 set tabstop=4 softtabstop=4
 set colorcolumn=130
@@ -14,7 +24,7 @@ set relativenumber
 set hlsearch
 set clipboard=unnamed
 set path+=**
-set t_Co=256 " needed for vim-airline
+set t_Co=256 "needed for vim-airline
 set mouse=a
 set updatetime=100 " for updating vim git gutter faster
 set cursorline "highlight cursor line
@@ -42,54 +52,60 @@ nmap <F10> :set invpaste<CR>
 set pastetoggle=<F10>
 
 
-nnoremap <leader>pli :PluginInstall<CR> 
-nnoremap <leader>plc :PluginClean<CR>
+nnoremap <leader>pli :PlugInstall<CR> 
+nnoremap <leader>plc :PlugClean<CR>
 map <leader>t :TagbarToggle<CR>
+map <TAB> gt 
 
 
 " -------------- VUNDLE SECTION BEGINS HERE ----------------
 set nocompatible              " be iMproved, required
-filetype off                  " required
 " set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'mbbill/undotree'
-Plugin 'Yggdroot/indentLine' "Display indent level
-Plugin 'fcpg/vim-osc52'
-Plugin 'preservim/nerdcommenter'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'jiangmiao/auto-pairs'
-Plugin 'tpope/vim-fugitive'
-Plugin 'hashivim/vim-terraform'
+call plug#begin('~/.vim/bundle')
+Plug 'mbbill/undotree'
+Plug 'Yggdroot/indentLine' "Display indent level
+Plug 'fcpg/vim-osc52'
+Plug 'preservim/nerdcommenter'
+Plug 'airblade/vim-gitgutter'
+Plug 'ryanoasis/vim-devicons'
+Plug 'jiangmiao/auto-pairs'
+Plug 'tpope/vim-fugitive'
+Plug 'hashivim/vim-terraform'
 "Uncomment below as needed
-"Plugin 'scrooloose/syntastic'
-"Plugin 'nvie/vim-flake8'
-"Plugin 'dense-analysis/ale'
-"Plugin 'neoclide/coc.nvim'
-Plugin 'majutsushi/tagbar' "install ctags separately
+"Plug 'scrooloose/syntastic'
+"Plug 'nvie/vim-flake8'
+"Plug 'dense-analysis/ale'
+Plug 'neoclide/coc.nvim'
+"install ctags separately
+Plug  'preservim/tagbar'
 if os =~ "armv6l"
-    Plugin 'ctrlpvim/ctrlp.vim'
-    Plugin 'itchyny/lightline.vim'
+    Plug 'ctrlpvim/ctrlp.vim'
+    Plug 'itchyny/lightline.vim'
 else
-    "Plugin 'ycm-core/YouCompleteMe'
-    Plugin 'vim-airline/vim-airline'
-    Plugin 'vim-airline/vim-airline-themes'
-    Plugin 'junegunn/fzf'
-    Plugin 'junegunn/fzf.vim'
-    Plugin 'preservim/nerdtree'
-    Plugin 'xuyuanp/nerdtree-git-plugin' "git indicators in Nerd Tree
-    Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+    "Plug 'ycm-core/YouCompleteMe'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'junegunn/fzf'
+    Plug 'junegunn/fzf.vim'
+    Plug 'preservim/nerdtree'
+    Plug 'xuyuanp/nerdtree-git-plugin' "git indicators in Nerd Tree
+    Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+endif
+call plug#end()
+
+
+if need_to_install_plugins == 1
+    echo "Installing plugins..."
+    silent! PlugInstall
+    echo "Done!"
+    q
 endif
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
+set noshowmode "hide vim default mode status"
+
+
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""" FZF Options """"""""""""""""""""""""" 
@@ -185,4 +201,3 @@ let g:ale_completion_enabled = 1
 let g:terraform_align=1
 "let g:terraform_fold_sections=1
 let g:terraform_fmt_on_save=1
-
