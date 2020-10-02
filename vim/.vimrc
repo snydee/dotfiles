@@ -1,8 +1,11 @@
+"source $HOME/src/dotfiles/vim/coc.vim
 syntax on
 set nu
 set tabstop=4 softtabstop=4
-set colorcolumn=80
+set colorcolumn=130
 set smartindent
+set shiftwidth=4  " number of spaces to use for auto indent
+set autoindent  " copy indent from current line when starting a new
 set incsearch
 set noswapfile
 set expandtab
@@ -30,6 +33,7 @@ nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
+nnoremap <leader>w :wincmd w<CR>
 nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <leader>rc :%s///gc<Left><Left><Left>
 nmap <leader><leader> V
@@ -38,8 +42,9 @@ nmap <F10> :set invpaste<CR>
 set pastetoggle=<F10>
 
 
-nnoremap <leader>plugi :PluginInstall<CR> 
-nnoremap <leader>plugc :PluginClean<CR>
+nnoremap <leader>pli :PluginInstall<CR> 
+nnoremap <leader>plc :PluginClean<CR>
+map <leader>t :TagbarToggle<CR>
 
 
 " -------------- VUNDLE SECTION BEGINS HERE ----------------
@@ -54,27 +59,32 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'mbbill/undotree'
-Plugin 'scrooloose/syntastic'
-Plugin 'nvie/vim-flake8'
-Plugin 'Yggdroot/indentLine'
+Plugin 'Yggdroot/indentLine' "Display indent level
 Plugin 'fcpg/vim-osc52'
 Plugin 'preservim/nerdcommenter'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'ryanoasis/vim-devicons'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'tpope/vim-fugitive'
+Plugin 'hashivim/vim-terraform'
+"Uncomment below as needed
+"Plugin 'scrooloose/syntastic'
+"Plugin 'nvie/vim-flake8'
+"Plugin 'dense-analysis/ale'
+"Plugin 'neoclide/coc.nvim'
+Plugin 'majutsushi/tagbar' "install ctags separately
 if os =~ "armv6l"
-        Plugin 'ctrlpvim/ctrlp.vim'
-        Plugin 'itchyny/lightline.vim'
+    Plugin 'ctrlpvim/ctrlp.vim'
+    Plugin 'itchyny/lightline.vim'
 else
-		Plugin 'ycm-core/YouCompleteMe'
-		Plugin 'vim-airline/vim-airline'
-		Plugin 'vim-airline/vim-airline-themes'
-		Plugin 'junegunn/fzf'
-		Plugin 'junegunn/fzf.vim'
-        Plugin 'preservim/nerdtree'
-        Plugin 'xuyuanp/nerdtree-git-plugin' "git indicators in Nerd Tree
-        Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
+    "Plugin 'ycm-core/YouCompleteMe'
+    Plugin 'vim-airline/vim-airline'
+    Plugin 'vim-airline/vim-airline-themes'
+    Plugin 'junegunn/fzf'
+    Plugin 'junegunn/fzf.vim'
+    Plugin 'preservim/nerdtree'
+    Plugin 'xuyuanp/nerdtree-git-plugin' "git indicators in Nerd Tree
+    Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 endif
 
 " All of your Plugins must be added before the following line
@@ -86,10 +96,10 @@ filetype plugin indent on    " required
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
 if os !~ "armv6l"
-        set rtp+=~/.fzf
-        nnoremap <silent> <C-f> :Files<CR>
-        nnoremap // :BLines<cr>
-        nnoremap <C-p> :Rg<cr>
+    set rtp+=~/.fzf
+    nnoremap <silent> <C-f> :Files<CR>
+    nnoremap // :BLines<cr>
+    nnoremap <C-p> :Rg<cr>
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -145,3 +155,34 @@ nmap <leader>ght :GitGutterLineHighlightsToggle<CR>
 "    set undodir=$HOME."/.undodir"
 "    set undofile
 "endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" NETRW Settings """""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+        let g:netrw_banner = 0
+        let g:netrw_liststyle = 3
+        let g:netrw_browse_split = 4
+        let g:netrw_altv = 1
+        let g:netrw_winsize = 15
+if os =~ "armv6l"
+        augroup ProjectDrawer
+          autocmd!
+          autocmd VimEnter * :Vexplore
+        augroup END
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" ALE Settings """""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ale_linters = {'python': ['flake8']}
+let g:ale_fixers = {'*': [], 'python': ['black']}
+let g:ale_fix_on_save = 1
+let g:ale_completion_enabled = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""" Terraform Settings """""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:terraform_align=1
+"let g:terraform_fold_sections=1
+let g:terraform_fmt_on_save=1
+
