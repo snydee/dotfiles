@@ -1,15 +1,8 @@
 "source $HOME/src/dotfiles/vim/coc.vim
 
-
-"plugins
-let need_to_install_plugins = 0
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    let need_to_install_plugins = 1
-endif
-
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""" nice defaults""""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 set nu
 set tabstop=4 softtabstop=4
 set colorcolumn=130
@@ -31,36 +24,18 @@ set cursorline "highlight cursor line
 set backspace=2 "to allow backspacing over indent,eol,start
 
 
-let os = trim(system('uname -m')) 
+let os = system('uname -m') 
 
 
-" ------------- key remaps -----------
+"plugins
+let need_to_install_plugins = 0
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    let need_to_install_plugins = 1
+endif
 
-let mapleader = "\<Space>"
-
-nnoremap <leader>rv :source $MYVIMRC<CR>
-nnoremap <leader>h :wincmd h<CR>
-nnoremap <leader>j :wincmd j<CR>
-nnoremap <leader>k :wincmd k<CR>
-nnoremap <leader>l :wincmd l<CR>
-nnoremap <leader>w :wincmd w<CR>
-nnoremap <leader>u :UndotreeShow<CR>
-nnoremap <leader>rc :%s///gc<Left><Left><Left>
-nmap <leader><leader> V
-" F10 to toggle paste mode
-nmap <F10> :set invpaste<CR>
-set pastetoggle=<F10>
-
-
-nnoremap <leader>pli :PlugInstall<CR> 
-nnoremap <leader>plc :PlugClean<CR>
-map <leader>t :TagbarToggle<CR>
-map <TAB> gt 
-
-
-" -------------- VUNDLE SECTION BEGINS HERE ----------------
-set nocompatible              " be iMproved, required
-" set the runtime path to include Vundle and initialize
+" -------------- PLUGIN SECTION BEGINS HERE ----------------
 
 call plug#begin('~/.vim/bundle')
 Plug 'mbbill/undotree'
@@ -76,7 +51,7 @@ Plug 'hashivim/vim-terraform'
 "Plug 'scrooloose/syntastic'
 "Plug 'nvie/vim-flake8'
 "Plug 'dense-analysis/ale'
-Plug 'neoclide/coc.nvim'
+"Plug 'neoclide/coc.nvim'
 "install ctags separately
 Plug  'preservim/tagbar'
 if os =~ "armv6l"
@@ -102,9 +77,45 @@ if need_to_install_plugins == 1
     q
 endif
 
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""" key remaps """"""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let mapleader = "\<Space>"
+
+nnoremap <leader>rv :source $MYVIMRC<CR>
+nnoremap <leader>h :wincmd h<CR>
+nnoremap <leader>j :wincmd j<CR>
+nnoremap <leader>k :wincmd k<CR>
+nnoremap <leader>l :wincmd l<CR>
+nnoremap <leader>w :wincmd w<CR>
+nnoremap <leader>u :UndotreeShow<CR>
+nnoremap <leader>rc :%s///gc<Left><Left><Left>
+nmap <leader><leader> V
+" F10 to toggle paste mode
+nmap <F10> :set invpaste<CR>
+set pastetoggle=<F10>
+
+
+nnoremap :pli :PlugInstall<CR> 
+nnoremap :plc :PlugClean<CR>
+map <leader>t :TagbarToggle<CR>
+map <TAB> gt 
+
+"Disable cursor keys"
+for key in ['<Up>', '<Down>', '<Left>', '<Right>']
+  exec 'noremap' key '<Nop>'
+  exec 'vnoremap' key '<Nop>'
+  "exec 'inoremap' key '<Nop>'
+  "exec 'cnoremap' key '<Nop>'
+endfor
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""" lightline/airline options """""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
 set noshowmode "hide vim default mode status"
-
-
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -115,6 +126,7 @@ if os !~ "armv6l"
     set rtp+=~/.fzf
     nnoremap <silent> <C-f> :Files<CR>
     nnoremap // :BLines<cr>
+    nnoremap \\ :Buffers<cr>
     nnoremap <C-p> :Rg<cr>
 endif
 
@@ -123,7 +135,6 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
 xmap <C-c> y:call SendViaOSC52(getreg('"'))<cr>
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""" vim-devicons """""""""""""""""""""" 
@@ -144,6 +155,7 @@ endif
 if os !~ "armv6l"
         let NERDTreeShowHidden=1
         nmap <silent> <leader>n :NERDTreeToggle<CR> :NERDTreeMirror<CR>
+        map <leader>r :NERDTreeFind<cr>
         autocmd StdinReadPre * let s:std_in=1
         "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
         "autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -156,7 +168,6 @@ endif
 "" Align line-wise comment delimiters flush left instead of following code
 " indentation
 let g:NERDDefaultAlign = 'left'
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""" VIM-GITGUTTER """""""""""""""""""" 
