@@ -1,5 +1,3 @@
-"source $HOME/src/dotfiles/vim/coc.vim
-
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""" nice defaults""""""""""""""""""""""" 
 """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -26,6 +24,9 @@ set backspace=2 "to allow backspacing over indent,eol,start
 
 let os = system('uname -m') 
 
+if os =~ "x86_64"
+    source $HOME/src/dotfiles/vim/coc.vim
+endif
 
 "plugins
 let need_to_install_plugins = 0
@@ -51,9 +52,11 @@ Plug 'hashivim/vim-terraform'
 "Plug 'scrooloose/syntastic'
 "Plug 'nvie/vim-flake8'
 "Plug 'dense-analysis/ale'
-"Plug 'neoclide/coc.nvim'
 "install ctags separately
 Plug  'preservim/tagbar'
+if os =~ "x86_64"
+    Plug 'neoclide/coc.nvim'
+endif
 if os =~ "armv6l"
     Plug 'ctrlpvim/ctrlp.vim'
     Plug 'itchyny/lightline.vim'
@@ -91,7 +94,7 @@ nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
 nnoremap <leader>w :wincmd w<CR>
-nnoremap <leader>u :UndotreeShow<CR>
+nnoremap <leader>u :UndotreeToggle<CR>
 nnoremap <leader>rc :%s///gc<Left><Left><Left>
 nmap <leader><leader> V
 " F10 to toggle paste mode
@@ -111,6 +114,8 @@ for key in ['<Up>', '<Down>', '<Left>', '<Right>']
   "exec 'inoremap' key '<Nop>'
   "exec 'cnoremap' key '<Nop>'
 endfor
+" Clear search
+nnoremap <BS> :noh<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""" lightline/airline options """""""""""" 
