@@ -10,6 +10,7 @@ set smartindent
 set shiftwidth=4  " number of spaces to use for auto indent
 set autoindent  " copy indent from current line when starting a new
 set incsearch
+set ignorecase " ignore case in search
 set noswapfile
 set expandtab
 set background=dark
@@ -24,6 +25,12 @@ set cursorline "highlight cursor line
 set backspace=2 "to allow backspacing over indent,eol,start
 set foldenable foldmethod=indent
 hi Pmenu ctermbg=black ctermfg=white
+set laststatus=2
+
+
+" Only split to the right or below
+set splitbelow
+set splitright
 
 
 let os = system('uname -m') 
@@ -43,6 +50,7 @@ endif
 " -------------- PLUGIN SECTION BEGINS HERE ----------------
 
 call plug#begin('~/.vim/bundle')
+Plug 'wadackel/vim-dogrun'
 Plug 'mbbill/undotree'
 Plug 'Yggdroot/indentLine' "Display indent level
 Plug 'fcpg/vim-osc52'
@@ -87,6 +95,13 @@ if need_to_install_plugins == 1
 endif
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""" Color Schemes """"""""""""""""""""""""" 
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+colorscheme dogrun
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""" key remaps """"""""""""""""""""""""" 
@@ -105,7 +120,7 @@ nnoremap <leader>rc :%s///gc<Left><Left><Left>
 nmap <leader><leader> V
 
 " F10 to toggle paste mode
-nmap <F10> :set invpaste<CR>
+"nmap <F10> :set invpaste<CR>
 set pastetoggle=<F10>
 
 " F2 to quit VIM
@@ -203,6 +218,19 @@ nmap <leader>ght :GitGutterLineHighlightsToggle<CR>
 "    set undodir=$HOME."/.undodir"
 "    set undofile
 "endif
+"
+if has("persistent_undo")
+   let target_path = expand('~/.undodir')
+
+    " create the directory and any parent directories
+    " if the location does not exist.
+    if !isdirectory(target_path)
+        call mkdir(target_path, "p", 0700)
+    endif
+
+    let undodir=target_path
+    set undofile
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""" NETRW Settings """""""""""""""""""" 
