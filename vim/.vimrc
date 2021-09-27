@@ -1,21 +1,22 @@
-"if filereadable("source $HOME/dotfiles/vim/coc.vim")
-    source $HOME/dotfiles/vim/coc.vim
+"if filereadable("source $HOME/dotfiles/vim/.coc.vim")
+    source $HOME/.coc.vim
 "endif
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""""" nice defaults""""""""""""""""""""""" 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 set nu
 set tabstop=4 softtabstop=4
-set colorcolumn=130
+set colorcolumn=119
 set smartindent
 set shiftwidth=4  " number of spaces to use for auto indent
 set autoindent  " copy indent from current line when starting a new
-set incsearch
-set ignorecase " ignore case in search
+" start searching immediateky and highlight search results
+set incsearch hlsearch
+" ignore case in search unless uppercase is present in search
+set ignorecase smartcase
 set noswapfile
 set expandtab
 set relativenumber
-set hlsearch
 set clipboard=unnamed
 set path+=**
 set t_Co=256 "needed for vim-airline
@@ -24,8 +25,14 @@ set updatetime=100 " for updating vim git gutter faster
 set cursorline "highlight cursor line
 set backspace=2 "to allow backspacing over indent,eol,start
 set laststatus=2
+"Reload file automatically if its modified on disk
+ au CursorHold * checktime 
+" Update a buffer's contents on focus if it changed outside of Vim.
+ au FocusGained,BufEnter * :checktime
+set autoread
 
-" Only split to the right or below
+
+" split right or below only
 set splitbelow
 set splitright
 
@@ -45,7 +52,10 @@ endif
 call plug#begin('~/.vim/bundle')
 Plug 'wadackel/vim-dogrun'
 "Plug 'tmhedberg/SimpylFold'
-Plug 'kalekundert/vim-coiled-snake'
+let g:SimpylFold_docstring_preview = 1
+let g:SimpylFold_fold_import = 0
+let g:SimpylFold_fold_docstring  = 0
+"Plug 'kalekundert/vim-coiled-snake'
 Plug 'Konfekt/FastFold'
 Plug 'mbbill/undotree'
 Plug 'Yggdroot/indentLine' "Display indent level
@@ -54,7 +64,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'airblade/vim-gitgutter'
 Plug 'ryanoasis/vim-devicons'
 "Plug 'jiangmiao/auto-pairs'
-"Plug 'tpope/vim-surround'
+Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
 Plug 'hashivim/vim-terraform'
 "Uncomment below as needed
@@ -69,6 +79,8 @@ Plug 'rakr/vim-one'
 " Dim paragraphs above and below the active paragraph.
 Plug 'junegunn/limelight.vim'
 "Plug 'wellle/context.vim'
+Plug 'vim-test/vim-test'
+Plug 'jebaum/vim-tmuxify'
 if os =~ "armv6l"
     Plug 'ctrlpvim/ctrlp.vim'
     Plug 'itchyny/lightline.vim'
@@ -97,12 +109,13 @@ endif
 """""""""""""" Color Schemes """"""""""""""""""""""""" 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 "colorscheme dogrun
-colorscheme one
+ colorscheme one
 hi Pmenu ctermbg=black ctermfg=white
 hi Search ctermbg=Yellow
+"hi Search cterm=NONE ctermfg=black ctermbg=blue
+hi CursorLine   cterm=NONE ctermbg=DarkGrey ctermfg=white guibg=darkred guifg=white
 set background=dark
 
-"hi Search cterm=NONE ctermfg=black ctermbg=blue
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -110,19 +123,45 @@ set background=dark
 """""""""""""""""""""""""""""""""""""""""""""""""""
 
 let mapleader = "\<Space>"
+nnoremap jk <ESC>:w<CR>
+nnoremap kj <ESC>:w<CR>
 inoremap jk <ESC>:w<CR>
 inoremap kj <ESC>:w<CR>
 vnoremap jk <ESC>:w<CR>
 vnoremap kj <ESC>:w<CR>
 
+" for wrapped  lines, scroll the wrapped lines
+nnoremap j gj
+nnoremap k gk
+
+" Toggle last open buffer
+nnoremap <leader><tab> <c-^>
+
+
 nnoremap <leader>rv :source $MYVIMRC<CR>
+" Edit Vim config file in a new tab.
+map <Leader>ev :tabnew $MYVIMRC<CR>
+
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
 nnoremap <leader>l :wincmd l<CR>
 nnoremap <leader>w :wincmd w<CR>
 nnoremap <leader>u :UndotreeToggle<CR>
-nnoremap <leader>rc :%s///gc<Left><Left><Left>
+
+" Press * to search for the term under the cursor or a visual selection and
+" then press a key below to replace all instances of it in the current file.
+nnoremap <Leader>r :%s///g<Left><Left>
+nnoremap <Leader>rc :%s///gc<Left><Left><Left>
+
+" The same as above but instead of acting on the whole file it will be
+" restricted to the previously visually selected range. You can do that by
+" pressing *, visually selecting the range you want it to apply to and then
+" press a key below to replace all instances of it in the current selection.
+xnoremap <Leader>r :s///g<Left><Left>
+xnoremap <Leader>rc :s///gc<Left><Left><Left>
+
+
 nmap <leader><leader> V
 " F10 to toggle paste mode
 nmap <F10> :set invpaste<CR>
@@ -130,10 +169,12 @@ set pastetoggle=<F10>
 nmap <F2> :q!<CR>
 nmap <F3> :set relativenumber!<CR>
 
-nnoremap :pli :PlugInstall<CR> 
-nnoremap :plc :PlugClean<CR>
+nnoremap <leader>pli :PlugInstall<CR> 
+nnoremap <leader>plc :PlugClean<CR>
 map <leader>t :TagbarToggle<CR>
 "map <TAB> gt 
+"Open file under cursor in vertical split, noremap prevents a recursive call, otherwise gf will loop forever
+noremap gf <C-w>vgf<CR>
 
 "Disable cursor keys"
 for key in ['<Up>', '<Down>', '<Left>', '<Right>']
@@ -146,20 +187,35 @@ endfor
 " Clear search
  nnoremap <BS> :noh<CR>
 
-" control-s to save
-nmap <c-s> :w<CR>
-"save and remain in insert mode 
-"imap <c-s> <Esc>:w<CR>a 
-"save and exit insert mode
-imap <c-s> <Esc>:w<CR> 
-" Save without quitting
-nmap <leader>z <Esc>:w<CR>
-imap <leader>z <Esc>:w<CR>
+" SAVE WITHOUT QUITTING
+nnoremap <leader>z <Esc>:w<CR>
+inoremap <leader>z <Esc>:w<CR>
+" SAVE AND QUIT CURRENT BUFFER
+inoremap <leader>wq <esc>:wq<cr>
+nnoremap <leader>wq :wq<cr>
+
+" QUIT DONT SAVE
+inoremap <leader>qq <esc>:q!<cr>
+nnoremap <leader>qq :q!<cr>
+" QUIT ALL DONT SAVE
+inoremap <leader>qa <esc>:qa!<cr>
+nnoremap <leader>qa :qa!<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """""""""""" lightline/airline options """""""""""" 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 set noshowmode "hide vim default mode status"
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead'
+      \ },
+      \ }
+
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -173,8 +229,12 @@ set noshowmode "hide vim default mode status"
 if os !~ "armv6l"
     set rtp+=~/.fzf
     nnoremap <silent> <C-f> :Files<CR>
-    nnoremap // :BLines<cr>
-    nnoremap \\ :Buffers<cr>
+    "nnoremap // :BLines<cr>
+" Open fzf search will last search prepopulated
+    nnoremap // :BLines<cr><C-p>
+" Open list of buffers
+    "nnoremap \\ :Buffers<cr>
+    nnoremap <leader>b :Buffers<cr>
     nnoremap <C-p> :Rg<cr>
 endif
 
@@ -208,6 +268,7 @@ if os !~ "armv6l"
         "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
         "autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 endif
+let g:NERDTreeWinSize=50
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""" NERD COMMENTER """""""""""""""""""" 
@@ -215,7 +276,11 @@ endif
 
 "" Align line-wise comment delimiters flush left instead of following code
 " indentation
+map <leader>/ <Plug>NERDCommenterToggle
 let g:NERDDefaultAlign = 'left'
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""" VIM-GITGUTTER """""""""""""""""""" 
@@ -283,8 +348,36 @@ let g:tagbar_autofocus = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""" Vim Diff Colors """""""""""""""""""
-"""""""""""""""""""""""""""""""""""""""""""""""""""
-highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
-highlight DiffDelete cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
+""""""""""""""""""""""""""""""""""""""""""""""""""
+"highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
+"highlight DiffDelete cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
+"highlight DiffChange cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
+"highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Red
+
+highlight DiffAdd    cterm=bold ctermfg=44 ctermbg=17 gui=none guifg=bg guibg=Red
+highlight DiffDelete cterm=bold ctermfg=7 ctermbg=17 gui=none guifg=bg guibg=Red
 highlight DiffChange cterm=bold ctermfg=10 ctermbg=17 gui=none guifg=bg guibg=Red
 highlight DiffText   cterm=bold ctermfg=10 ctermbg=88 gui=none guifg=bg guibg=Red
+
+let test#python#runner = 'pytest'
+"let test#python#pytest#executable = '<placeholder>'
+let test#strategy = "tmuxify"
+
+" these "Ctrl mappings" work well when Caps Lock is mapped to Ctrl
+ nmap <silent> tn :TestNearest<CR>
+ nmap <silent> tf :TestFile<CR>
+ nmap <silent> ts :TestSuite<CR>
+ nmap <silent> tl :TestLast<CR>
+ nmap <silent> tg :TestVisit<CR>
+
+ " -----------------------------------------------------------------------------
+" Basic autocommands
+" -----------------------------------------------------------------------------
+
+" Auto-resize splits when Vim gets resized.
+autocmd VimResized * wincmd =
+
+" Unset paste on InsertLeave.
+autocmd InsertLeave * silent! set nopaste
+
+
