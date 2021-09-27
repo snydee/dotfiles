@@ -1,0 +1,13 @@
+[color]
+	ui = auto
+[push]
+	default = simple
+[alias]
+    dag = log --graph --decorate
+[merge]
+	external = git_diff_wrapper
+[diff]
+	external = git_diff_wrapper
+[pager]
+        diff = 
+
